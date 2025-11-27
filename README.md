@@ -154,6 +154,74 @@ python regression/run_regression.py --verbose
 - **Python reference model** for golden comparison
 - **Signal preprocessing** pipeline (filtering, spike detection, compression)
 
+## Simulation Waveforms
+
+The following waveforms demonstrate the neural compressor processing real EEG data through the complete signal processing pipeline:
+
+![Waveform 1](docs/results/Screenshot%202025-11-26%20193112.png)
+![Waveform 2](docs/results/Screenshot%202025-11-26%20205319.png)
+
+### What You're Looking At
+
+**Top Section - Input Data:**
+- Raw EEG data streaming in via AXI-Stream protocol (`s_axis_tdata` in hexadecimal)
+- Valid/ready handshaking showing proper data flow control
+
+**Middle Section - Signal Processing Pipeline:**
+- **Filter Output**: After IIR bandpass filtering (1-40Hz), removing noise and artifacts
+- **Spike Detector**: Detects neural spikes when signal exceeds threshold, with `spike_detected` pulses marking events
+- **Compressor**: Compressed output showing delta encoding and run-length encoding in action
+
+**Bottom Section - Output & Statistics:**
+- Compressed data packets on the output AXI-Stream (`m_axis_tdata`)
+- Packet type indicators (`m_axis_tuser`) showing delta/RLE/spike packet types
+- **Spike count** incrementing as neural events are detected
+- **Compression statistics** tracking sample processing and compression ratio
+
+### Key Observations
+
+1. **Data Flow**: Input EEG samples flow continuously through the pipeline with proper backpressure handling
+2. **Spike Detection**: `spike_detected` pulses correspond to neural events exceeding the adaptive threshold
+3. **Compression**: Output shows compressed packets (often smaller delta values) reducing bandwidth
+4. **Timing**: Pipeline latency visible as data propagates through filter → detector → compressor stages
+
+These waveforms validate the end-to-end functionality: real EEG data is successfully filtered, spikes are detected, and the data is compressed while maintaining critical neural event information.
+
+## Simulation Waveforms
+
+The waveforms below show the neural compressor processing real EEG data through the complete signal processing pipeline in real-time simulation.
+
+![Waveform Analysis - Early Processing](docs/results/Screenshot%202025-11-26%20193112.png)
+
+![Waveform Analysis - Active Compression](docs/results/Screenshot%202025-11-26%20205319.png)
+
+### What You're Looking At
+
+**Input Stage (Top):**
+- Raw EEG data streaming in via AXI-Stream protocol (`s_axis_tdata` shown in hex)
+- Valid/ready handshaking signals showing proper flow control
+- Continuous data stream from PhysioNet EEG dataset
+
+**Processing Pipeline (Middle):**
+- **Filter Output**: Cleaned signal after IIR bandpass filtering removes noise (1-40Hz band)
+- **Spike Detector**: Pulses on `spike_detected` when neural events exceed threshold
+- **Compressor**: Generates compressed packets using delta encoding and run-length encoding
+
+**Output & Statistics (Bottom):**
+- Compressed data packets on output AXI-Stream (`m_axis_tdata`)
+- Packet type field (`m_axis_tuser`) indicates delta/RLE/spike/literal packet types
+- **Spike count** increments as neural events are detected in real-time
+- **Compression statistics** tracking total samples processed and compression efficiency
+
+### Key Observations
+
+1. **Continuous Data Flow**: Input samples stream through the pipeline with proper backpressure handling via `tvalid`/`tready` handshaking
+2. **Spike Detection**: `spike_detected` pulses mark critical neural events when signal amplitude crosses the adaptive threshold
+3. **Compression Efficiency**: Output shows compressed packets (often smaller delta values) reducing bandwidth while preserving spike information
+4. **Pipeline Latency**: Visible delay as data propagates through the three-stage pipeline (filter → detector → compressor)
+
+These waveforms demonstrate successful end-to-end functionality: real EEG data is filtered to remove artifacts, neural spikes are accurately detected, and the data stream is compressed while maintaining critical event information for BCI applications.
+
 ## Results
 
 - **Compression Ratio:** 40-70% while preserving spike information
