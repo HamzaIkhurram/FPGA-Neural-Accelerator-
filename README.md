@@ -22,30 +22,25 @@ The waveforms below show the neural compressor processing real EEG data from the
 
 ### What You're Looking At
 
-**Third Waveform - Complete Pipeline View:**
-- **Full System Overview**: This waveform provides a comprehensive view of all processing stages simultaneously
-- **Internal Pipeline Signals**: Visible signals from filter, spike detector, and compressor internal registers
-- **State Machine Transitions**: Compressor state changes visible in the FSM, showing transitions between delta, RLE, and spike encoding modes
-- **Backpressure Handling**: Demonstrates proper AXI-Stream flow control when downstream blocks pause data consumption
-- **Timing Relationships**: Shows precise cycle-by-cycle timing relationships between all pipeline stages
+**First Waveform - Early Processing Stage:**
+- **Input Stage**: Raw EEG data streaming in via AXI-Stream protocol (`s_axis_tdata` shown in hex)
+- **Valid/Ready Handshaking**: Proper flow control signals demonstrating AXI-Stream protocol compliance
+- **Initial Filtering**: Signal enters the IIR bandpass filter stage
+- **Early Spike Detection**: First neural events being detected as signal amplitude crosses threshold
 
-### Key Observations
-
-**Input Stage (Top):**
-- Raw EEG data streaming in via AXI-Stream protocol (`s_axis_tdata` shown in hex)
-- Valid/ready handshaking signals showing proper flow control
-- Continuous data stream from PhysioNet EEG dataset
-
-**Processing Pipeline (Middle):**
+**Second Waveform - Active Compression Phase:**
 - **Filter Output**: Cleaned signal after IIR bandpass filtering removes noise (1-40Hz band)
-- **Spike Detector**: Pulses on `spike_detected` when neural events exceed threshold
-- **Compressor**: Generates compressed packets using delta encoding and run-length encoding
+- **Spike Detector**: Pulses on `spike_detected` when neural events exceed adaptive threshold
+- **Compressor Activity**: Generates compressed packets using delta encoding and run-length encoding
+- **Output Stream**: Compressed data packets on output AXI-Stream (`m_axis_tdata`) with packet type indicators (`m_axis_tuser`)
+- **Statistics Tracking**: Compression metrics and spike counts updating in real-time
 
-**Output & Statistics (Bottom):**
-- Compressed data packets on output AXI-Stream (`m_axis_tdata`)
-- Packet type field (`m_axis_tuser`) indicates delta/RLE/spike/literal packet types
-- **Spike count** increments as neural events are detected in real-time
-- **Compression statistics** tracking total samples processed and compression efficiency
+**Third Waveform - Complete Pipeline View:**
+- **Full System Overview**: Comprehensive view of all processing stages simultaneously
+- **Internal Pipeline Signals**: Visible signals from filter, spike detector, and compressor internal registers
+- **State Machine Transitions**: Compressor FSM showing transitions between delta, RLE, and spike encoding modes
+- **Backpressure Handling**: Proper AXI-Stream flow control when downstream blocks pause data consumption
+- **Timing Relationships**: Precise cycle-by-cycle timing relationships between all pipeline stages
 
 ### Key Observations
 
@@ -53,8 +48,9 @@ The waveforms below show the neural compressor processing real EEG data from the
 2. **Spike Detection**: `spike_detected` pulses mark critical neural events when signal amplitude crosses the adaptive threshold
 3. **Compression Efficiency**: Output shows compressed packets (often smaller delta values) reducing bandwidth while preserving spike information
 4. **Pipeline Latency**: Visible delay as data propagates through the three-stage pipeline (filter → detector → compressor)
+5. **Protocol Compliance**: All AXI-Stream handshaking signals demonstrate correct protocol implementation
 
-These waveforms demonstrate successful end-to-end functionality: real EEG data is filtered to remove artifacts, neural spikes are accurately detected, and the data stream is compressed while maintaining critical event information for BCI applications.
+These waveforms collectively demonstrate successful end-to-end functionality: real EEG data is filtered to remove artifacts, neural spikes are accurately detected, and the data stream is compressed while maintaining critical event information for BCI applications.
 
 ## Signal Processing Analysis
 
