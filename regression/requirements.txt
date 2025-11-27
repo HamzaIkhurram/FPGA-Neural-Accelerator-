@@ -1,0 +1,9 @@
+# Regression Framework Dependencies
+pyyaml>=6.0
+typing-extensions>=4.0.0
+
+# Optional: For advanced features
+# pytest>=7.0.0  # For running TDD tests
+# coverage>=7.0.0  # For Python coverage
+# psutil>=5.9.0  # Optional: Better cross-platform process detection
+

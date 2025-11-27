@@ -1,0 +1,41 @@
+{
+  "name": "neural_compressor_simple_regression",
+  "work_dir": "sim",
+  "simulation": {
+    "tool": "questa",
+    "work_dir": "sim",
+    "top_module": "neural_compressor_tb_simple",
+    "timeout": 300,
+    "max_workers": 2,
+    "tool_path": null,
+    "tool_args": {}
+  },
+  "coverage": {
+    "enabled": false,
+    "tool": "questa",
+    "merge": false,
+    "thresholds": {
+      "line_coverage": 80.0,
+      "toggle_coverage": 90.0,
+      "fsm_coverage": 75.0,
+      "expression_coverage": 85.0
+    },
+    "output_file": null
+  },
+  "tests": [
+    {
+      "name": "simple_test",
+      "enabled": true,
+      "tags": ["smoke", "functional"]
+    }
+  ],
+  "test_patterns": [],
+  "parallel": false,
+  "max_workers": 1,
+  "stop_on_error": false,
+  "report_format": ["html", "json", "text"],
+  "report_dir": null,
+  "email_enabled": false,
+  "email_recipients": []
+}
+
