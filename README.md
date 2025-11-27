@@ -6,7 +6,7 @@ Real-time brain-computer interface (BCI) signal processing accelerator with UVM 
 
 I designed and verified a complete hardware-accelerated neural signal compressor for real-time EEG/BCI applications. This project demonstrates production-grade ASIC design practices, from RTL implementation through automated verification workflows.
 
-**The Challenge:** Process noisy neural signals in real-time, detect critical spike events, and compress data for wireless transmission—all while maintaining signal integrity for brain-computer interfaces.
+**The Challenge:** Process noisy neural signals in real-time, detect critical spike events, and compress data for wireless transmission, all while maintaining signal integrity for brain-computer interfaces.
 
 **The Solution:** A 3-stage pipelined hardware accelerator with IIR filtering, adaptive spike detection, and hybrid compression, verified using industry-standard UVM methodology and automated regression frameworks.
 
@@ -18,7 +18,18 @@ The waveforms below show the neural compressor processing real EEG data from the
 
 ![Waveform Analysis - Active Compression](docs/results/Screenshot%202025-11-26%20205319.png)
 
+![Waveform Analysis - Complete Pipeline](docs/results/Screenshot%202025-11-26%20205954.png)
+
 ### What You're Looking At
+
+**Third Waveform - Complete Pipeline View:**
+- **Full System Overview**: This waveform provides a comprehensive view of all processing stages simultaneously
+- **Internal Pipeline Signals**: Visible signals from filter, spike detector, and compressor internal registers
+- **State Machine Transitions**: Compressor state changes visible in the FSM, showing transitions between delta, RLE, and spike encoding modes
+- **Backpressure Handling**: Demonstrates proper AXI-Stream flow control when downstream blocks pause data consumption
+- **Timing Relationships**: Shows precise cycle-by-cycle timing relationships between all pipeline stages
+
+### Key Observations
 
 **Input Stage (Top):**
 - Raw EEG data streaming in via AXI-Stream protocol (`s_axis_tdata` shown in hex)
@@ -44,6 +55,50 @@ The waveforms below show the neural compressor processing real EEG data from the
 4. **Pipeline Latency**: Visible delay as data propagates through the three-stage pipeline (filter → detector → compressor)
 
 These waveforms demonstrate successful end-to-end functionality: real EEG data is filtered to remove artifacts, neural spikes are accurately detected, and the data stream is compressed while maintaining critical event information for BCI applications.
+
+## Signal Processing Analysis
+
+The reference model processes real EEG data through the complete pipeline, generating comprehensive analysis visualizations:
+
+![Signal Processing Analysis](docs/results/analysis.png)
+
+**What This Shows:**
+
+This visualization demonstrates the complete signal processing pipeline using real PhysioNet EEG data:
+
+**Top Panel - Original EEG Signal:**
+- Raw neural data with typical noise and artifacts
+- Continuous time-series data stream from electrode recordings
+- Baseline drift and high-frequency noise visible in unprocessed signal
+
+**Second Row Left - Filtered Signal:**
+- Clean output after IIR bandpass filtering (1-40Hz)
+- Noise reduction while preserving neural event information
+- Smoothed signal ready for spike detection
+
+**Second Row Right - Spike Detection:**
+- Red markers indicate detected neural spikes
+- Adaptive threshold lines show detection sensitivity
+- Refractory period prevents false positives from closely-spaced events
+
+**Third Row Left - Frequency Domain:**
+- Power spectral density showing frequency content
+- Original signal has broadband noise across all frequencies
+- Filtered signal shows energy concentrated in 1-40Hz band (neural signal range)
+- Stopband attenuation visible outside the passband
+
+**Third Row Right - Compression Statistics:**
+- Packet type distribution showing compression algorithm performance
+- Delta encoding dominates for smooth signal regions
+- RLE packets handle flat/silent regions efficiently
+- Spike packets preserve critical neural events
+
+**Bottom Panel - Performance Metrics:**
+- Complete pipeline statistics including compression ratio, throughput, and latency
+- Hardware performance targets met: 1 sample/cycle throughput
+- Q16.16 fixed-point format enables efficient FPGA/ASIC implementation
+
+This analysis validates the hardware design against a golden reference model, ensuring correctness before RTL simulation.
 
 ## What I've Achieved
 
