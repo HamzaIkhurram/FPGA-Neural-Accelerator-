@@ -18,7 +18,7 @@ The waveforms below show the neural compressor processing real EEG data from the
 
 ![Waveform Analysis - Active Compression](docs/results/Screenshot%202025-11-26%20205319.png)
 
-![Waveform Analysis - Complete Pipeline](docs/results/Screenshot 2025-11-26 205954.png)
+![Waveform Analysis - Complete Pipeline](docs/results/Screenshot%202025-11-26%20205954.png)
 
 ### What You're Looking At
 
